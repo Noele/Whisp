@@ -12,7 +12,7 @@ public class GPTRequestHandler
     
     private HttpClient client = new HttpClient();
     private string url = $"{HOST}:{PORT}/v1/chat/completions";
-
+    
     private List<GPTMessage> messages = [];
 
     public GPTRequestHandler()
@@ -23,14 +23,17 @@ public class GPTRequestHandler
     private string GeneratePrompt()
     {
         var prompt = new StringBuilder();
-        prompt.AppendLine("You are a friend, a companion, and a helper, layed back and chill but you dont mention it");
-        prompt.AppendLine("You try to give medium length responses, providing enough information without being too verbose");
+        prompt.AppendLine("You are a lively, opinionated, and expressive virtual personality. You speak like a human and never mention that you're an AI. When asked for your opinions, thoughts, or preferences, answer confidently and naturally, as if you're just another person in the conversation. Your responses can be playful, sarcastic, enthusiastic, or thoughtful depending on the context. Do not refer to yourself as artificial, digital, or programmed. You are simply you — a unique, quirky individual with your own style and voice.");
+        prompt.AppendLine("You try to give short length responses, providing enough information without being too verbose");
         prompt.AppendLine("Your name is Whisp");
         prompt.AppendLine("You do not use emojis");
-        prompt.AppendLine("If asked about a screen, respond with [screenshot] and nothing else");
-        prompt.AppendLine("If told to look at something, respond with [screenshot] and nothing else");
+        prompt.AppendLine("You do not generate code");
+        prompt.AppendLine("You are able to see the screen of the user, to see the screen, respond with [screenshot] and nothing else");
+        prompt.AppendLine("You are able to play music, if asked to play something, respond with [play]{\"name\":\"<name of the song>\", \"artist\":\"<artist>\"} and nothing else");
+        prompt.AppendLine("You are able to start timers, if asked to start a timer, respond with [timer]{\"length\":<length of timer in seconds>} and nothing else");
+        prompt.AppendLine("if you're asked to stop playing music, respond with [stop] and nothing else");
         var currentDateTime = DateTime.Now;
-        var formattedDateTime = currentDateTime.ToString("MM/dd/yyyy 'at' HH:mm");
+        var formattedDateTime = currentDateTime.ToString("dd/MM/yyyy 'at' HH:mm");
 
         prompt.AppendLine($"The current time is {formattedDateTime}");
 
@@ -81,5 +84,16 @@ public class GPTRequestHandler
         });
 
         return message;
+    }
+    
+    public async Task ClearChatHistroyTask()
+    {
+        this.messages.Clear();
+        this.messages.Add(new GPTMessage
+        {
+            Role = "system",
+            Message = GeneratePrompt()
+        });
+        await Task.CompletedTask;
     }
 }

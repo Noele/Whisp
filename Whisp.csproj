@@ -9,11 +9,14 @@
 
     <ItemGroup>
       <PackageReference Include="NAudio" Version="2.2.1" />
+      <PackageReference Include="NetMQ" Version="4.0.1.14" />
       <PackageReference Include="System.Drawing.Common" Version="10.0.0-preview.3.25173.2" />
       <PackageReference Include="System.Speech" Version="10.0.0-preview.3.25171.5" />
       <PackageReference Include="Tesseract" Version="5.2.0" />
       <PackageReference Include="Tesseract.Drawing" Version="5.2.0" />
       <PackageReference Include="Vosk" Version="0.3.38" />
+      <PackageReference Include="YoutubeExplode" Version="6.5.4" />
+      <PackageReference Include="ytdlp-executable" Version="2025.4.30" />
     </ItemGroup>
 
     <ItemGroup>
