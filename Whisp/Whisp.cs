@@ -4,25 +4,22 @@ namespace Whisp.Whisp;
 
 public class Whisp
 {
-    private Listener listener;
-
-    private Speaker speaker;
-    
-    private GPTProcessor gptProcessor;
-    
-    private ScreenshotReader screenshotReader;
+    private Listener _listener;
+    private Speaker _speaker;
+    private LLMProcessor _llmProcessor;
+    private ScreenshotReader _screenshotReader;
     
     public Whisp()
     {
-        this.listener = new Listener();
-        this.speaker = new Speaker();
-        this.screenshotReader = new ScreenshotReader();
-        this.gptProcessor = new GPTProcessor(this.screenshotReader, this.speaker, this.listener);
+        this._listener = new Listener();
+        this._speaker = new Speaker();
+        this._screenshotReader = new ScreenshotReader();
+        this._llmProcessor = new LLMProcessor(this._screenshotReader, this._speaker, this._listener);
     }
 
     public async Task Run(string[] args)
     {
-        listener.StartRecording();
+        _listener.StartRecording();
         Console.WriteLine("Listening...");
         await Task.Delay(-1);
     }

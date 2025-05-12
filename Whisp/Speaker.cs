@@ -5,10 +5,9 @@ namespace Whisp;
 
 public class Speaker
 {
-    private HttpClient client = new HttpClient();
-    private const int PORT = 5555;
-    private const string HOST = "tcp://localhost";
-    private string url = $"{HOST}:{PORT}";
+    private const int Port = 5555;
+    private const string Host = "tcp://localhost";
+    private readonly string _url = $"{Host}:{Port}";
     private PushSocket _requestSocket;
     public Speaker()
     {
@@ -17,7 +16,7 @@ public class Speaker
     
     public async Task Speak(string text)
     {
-        this._requestSocket.Connect(url);
+        this._requestSocket.Connect(_url);
         this._requestSocket.SendFrame(text);
         Console.WriteLine($"Sending payload: \n{text}");
     }
