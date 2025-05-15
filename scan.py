@@ -21,7 +21,7 @@ for desktop_path in desktop_paths:
             name = friendly_name(file)
             if name not in seen_names:
                 full_path = os.path.join(desktop_path, file)
-                apps_list.append({"program": name, "path": full_path})
+                apps_list.append({"name": name, "path": full_path})
                 seen_names.add(name)
 
 with open("apps.json", "w", encoding="utf-8") as f:
