@@ -19,5 +19,6 @@ public class Speaker
         this._requestSocket.Connect(_url);
         this._requestSocket.SendFrame(text);
         Console.WriteLine($"Sending payload: \n{text}");
+
     }
 }

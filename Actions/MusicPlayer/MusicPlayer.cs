@@ -16,13 +16,12 @@ public class MusicPlayer
     public MusicPlayer(Speaker speaker)
     {
         this._youtubeClient = new YoutubeClient();
+        this._waveOutEvent = new WaveOutEvent();
         this._speaker = speaker;
     }
 
     public async Task Play(string searchQuery)
     {
-        await this._speaker.Speak($"Searching for {searchQuery}");
-
         var searchResults = await this._youtubeClient.Search.GetVideosAsync(searchQuery);
         var video = searchResults.FirstOrDefault();
 
@@ -34,7 +33,7 @@ public class MusicPlayer
         }
 
         Console.WriteLine($"Found video: {video.Title}");
-        
+
         var streamManifest = await this._youtubeClient.Videos.Streams.GetManifestAsync(video.Id);
         var audioStreamInfo = streamManifest.GetAudioOnlyStreams().GetWithHighestBitrate();
 
@@ -44,27 +43,32 @@ public class MusicPlayer
             await this._speaker.Speak("There was an error trying to find that song");
             return;
         }
-        
-        string tempFile = Path.GetTempFileName() + ".mp3";
-        await this._youtubeClient.Videos.Streams.DownloadAsync(audioStreamInfo, tempFile);
-        
+
         await this._speaker.Speak($"Now playing {video.Title} by {video.Author}");
 
-        // Play the audio
-        await using var reader = new MediaFoundationReader(tempFile);
-        this._waveOutEvent = new WaveOutEvent();
+        // Save the audio stream to a temporary file
+        var tempFilePath = Path.GetTempFileName();
+        await using (var fileStream = File.Create(tempFilePath))
+        {
+            await this._youtubeClient.Videos.Streams.CopyToAsync(audioStreamInfo, fileStream);
+        }
 
+        // Play the audio
+        using var reader = new MediaFoundationReader(tempFilePath);
         this._waveOutEvent.Init(reader);
         this._waveOutEvent.Play();
 
         // Wait for playback to finish
         while (this._waveOutEvent.PlaybackState == PlaybackState.Playing && !this._shouldStop)
         {
-            await Task.Delay(500);
+            await Task.Delay(250);
         }
+
         this._waveOutEvent.Stop();
-        File.Delete(tempFile); // Clean up
         this._shouldStop = false;
+
+        // Clean up the temporary file
+        File.Delete(tempFilePath);
     }
 
     public async Task Stop()

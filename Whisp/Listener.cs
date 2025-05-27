@@ -6,7 +6,7 @@ namespace Whisp.Whisp;
 
 public sealed class Listener
 {
-    private const string Path = @"C:\Users\zoeyn\RiderProjects\Whisp\Whisp\AIModels\vosk-model-en-us-0.22";
+    private const string Path = @".\AIModels\vosk-model-en-us-0.22";
     private const int SampleRate = 16000;
     private const string Keyword = "whisper";
     
@@ -23,6 +23,7 @@ public sealed class Listener
         
         this._model = new Model(Path);
         this._recognizer = new VoskRecognizer(this._model, SampleRate);
+        this._recognizer.SetMaxAlternatives(3);
         this._waveIn = new WaveInEvent
         {
             WaveFormat = new WaveFormat(SampleRate, 1),
@@ -32,13 +33,23 @@ public sealed class Listener
         this._waveIn.DataAvailable += (_, e) =>
         {
             if (!this._recognizer.AcceptWaveform(e.Buffer, e.BytesRecorded)) return;
-            
-            var finalResult = this._recognizer.FinalResult().ToLower();
+
+            var finalResult = this._recognizer.FinalResult();
             Console.WriteLine(finalResult);
             
             if (finalResult.Contains(Keyword))
             {
-                var text = JsonDocument.Parse(finalResult).RootElement.GetProperty("text").ToString();
+                VoskResponse? voskResponse = JsonSerializer.Deserialize<VoskResponse>(finalResult);
+                if (voskResponse == null) return;
+                
+                Alternative? matchingAlternative = voskResponse.alternatives
+                    .Where(a => a.text.Contains(Keyword, StringComparison.OrdinalIgnoreCase))
+                    .OrderByDescending(a => a.confidence)
+                    .FirstOrDefault();
+                
+                if (matchingAlternative == null) return;
+                
+                var text = matchingAlternative.text;
                 var index = text.IndexOf(Keyword, StringComparison.Ordinal);
                 var result = index >= 0 ? text[(index + Keyword.Length)..].Trim() : string.Empty;
                 result = result.Replace(Keyword, string.Empty).Trim();

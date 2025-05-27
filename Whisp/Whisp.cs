@@ -1,4 +1,5 @@
-﻿using Whisp.ScreenReader;
+﻿using System.Drawing;
+using Whisp.ScreenReader;
 
 namespace Whisp.Whisp;
 
@@ -6,15 +7,13 @@ public class Whisp
 {
     private Listener _listener;
     private Speaker _speaker;
-    private LLMProcessor _llmProcessor;
-    private ScreenshotReader _screenshotReader;
+    private LLMResponseHandler _llmResponseHandler;
     
     public Whisp()
     {
         this._listener = new Listener();
         this._speaker = new Speaker();
-        this._screenshotReader = new ScreenshotReader();
-        this._llmProcessor = new LLMProcessor(this._screenshotReader, this._speaker, this._listener);
+        this._llmResponseHandler = new LLMResponseHandler(this._speaker, this._listener);
     }
 
     public async Task Run(string[] args)
