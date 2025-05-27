@@ -31,7 +31,9 @@ Out of the box, you'll need a few things:
 - The VOSK model, as I said before, we use en-us-0.22 which can be found at [alphacephei](https://alphacephei.com/vosk/)  
 - The LLM, this can be found on [huggingface](https://huggingface.co/QuantFactory/Meta-Llama-3-8B-Instruct-GGUF/blob/main/Meta-Llama-3-8B-Instruct.Q5_K_M.gguf)  
 - Kokoro! Installation instructions can be found on [huggingface](https://huggingface.co/hexgrad/Kokoro-82M)  
-- The CUDA toolkit, Whisp is designed to use CUDA, and without it, the whole speed thing is a pipedream. Install it from [developer.nvidia](https://developer.nvidia.com/cuda-downloads). Remember to add `CUDA_HOME`, `CUDA_PATH`, and `CUDA_PATH_V(your cuda version)` to your Environment Variables  
+- The CUDA toolkit, Whisp is designed to use CUDA, and without it, the whole speed thing is a pipedream. Install it from [developer.nvidia](https://developer.nvidia.com/cuda-downloads). Remember to add `CUDA_HOME`, `CUDA_PATH`, and `CUDA_PATH_V(your cuda version)` to your Environment Variables
+- The LLava model gguf, this is downloaded from (huggingface)[https://huggingface.co/xtuner/llava-llama-3-8b-v1_1-gguf/blob/main/llava-llama-3-8b-v1_1-int4.gguf]
+- The LLava model mmprog, this is downloaded from (huggingface)[https://huggingface.co/xtuner/llava-llama-3-8b-v1_1-gguf/blob/main/llava-llama-3-8b-v1_1-mmproj-f16.gguf]
 
 You will also need to generate yourself an `apps.json` file, this is used to allow Whisp to start programs for you. `scan.py` will generate one from your desktop shortcuts.
 
